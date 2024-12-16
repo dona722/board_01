@@ -1,5 +1,8 @@
 package com.example.board.reply.controller;
 
+import com.example.board.crud.CRUDAbstractApiController;
+import com.example.board.reply.db.ReplyEntity;
+import com.example.board.reply.model.ReplyDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,6 +1,12 @@
 package com.example.board.post.controller;
 
+import com.example.board.common.Api;
+import com.example.board.post.db.PostEntity;
+import com.example.board.post.model.PostRequest;
+import com.example.board.post.model.PostViewRequest;
+import com.example.board.post.service.PostService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/post")
+@RequiredArgsConstructor
 public class PostApiController {
 
     private final PostService postService;

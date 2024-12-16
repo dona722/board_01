@@ -1,5 +1,6 @@
 package com.example.board.board.db;
 
+import com.example.board.post.db.PostEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;

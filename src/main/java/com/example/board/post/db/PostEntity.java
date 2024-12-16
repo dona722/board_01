@@ -1,6 +1,7 @@
 package com.example.board.post.db;
 
 import com.example.board.board.db.BoardEntity;
+import com.example.board.reply.db.ReplyEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
