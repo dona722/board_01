@@ -15,7 +15,6 @@ import java.util.List;
 @ToString
 @Entity(name = "board")
 public class BoardEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,13 +22,13 @@ public class BoardEntity {
     private String boardName;
 
     private String status;
+    
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
 
-    @OneToMany(
-            mappedBy = "boardEntity"
-    )
+    @OneToMany(mappedBy = "boardEntity")
     @Builder.Default
     @Where(clause = "status = 'REGISTERED'")
     @OrderBy("id desc")
     private List<PostEntity> postList = List.of();
-
 }

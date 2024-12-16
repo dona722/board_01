@@ -5,9 +5,13 @@ spring:
       format_sql: true
       dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://localhost:3306/kimdohun?useSSL=false&useUnicode=true&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: kimdohun
     password: kimdohun
+
+book:
+  admin:
+    password: "1234" 

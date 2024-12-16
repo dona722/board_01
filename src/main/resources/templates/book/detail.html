@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>도서 상세</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- 도서 정보 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="card-title" th:text="${book.bookName}">도서명</h3>
+                    <div>
+                        <button class="btn btn-outline-primary" onclick="editBook()">수정</button>
+                        <button class="btn btn-outline-danger ms-2" onclick="deleteBook()">삭제</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="card-text">
+                            <strong>출판사:</strong> 
+                            <span th:text="${book.publisher}">출판사명</span>
+                        </p>
+                        <p class="card-text">
+                            <strong>가격:</strong> 
+                            <span th:text="${#numbers.formatInteger(book.price, 0, 'COMMA')}">가격</span>원
+                        </p>
+                        <p class="card-text">
+                            <strong>재고:</strong> 
+                            <span th:text="${book.stock}">재고</span>개
+                            <span th:if="${book.stock > 0}" class="badge bg-success ms-2">재고있음</span>
+                            <span th:unless="${book.stock > 0}" class="badge bg-danger ms-2">품절</span>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- 주문 영역 -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">주문하기</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">수량</label>
+                                    <input type="number" class="form-control" id="quantity" min="1" max="${book.stock}" value="1">
+                                </div>
+                                <button class="btn btn-primary w-100" 
+                                        th:onclick="'order(' + ${book.id} + ')'"
+                                        th:disabled="${book.stock <= 0}">
+                                    주문하기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 도서 수정 모달 -->
+        <div class="modal fade" id="editBookModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">도서 정보 수정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editBookForm">
+                            <input type="hidden" name="id" th:value="${book.id}">
+                            <div class="mb-3">
+                                <label class="form-label">도서명</label>
+                                <input type="text" class="form-control" name="bookName" th:value="${book.bookName}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">출판사</label>
+                                <input type="text" class="form-control" name="publisher" th:value="${book.publisher}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">가격</label>
+                                <input type="number" class="form-control" name="price" th:value="${book.price}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">재고</label>
+                                <input type="number" class="form-control" name="stock" th:value="${book.stock}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">관리자 비밀번호</label>
+                                <input type="password" class="form-control" name="password" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-primary" onclick="updateBook()">수정</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        var bookId = /*[[${book.id}]]*/ null;
+        
+        function editBook() {
+            const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+            modal.show();
+        }
+        
+        function updateBook() {
+            const formData = new FormData(document.getElementById('editBookForm'));
+            const data = Object.fromEntries(formData.entries());
+            
+            axios.put(`/api/books/${bookId}`, data)
+                .then(response => {
+                    alert('도서 정보가 수정되었습니다.');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('도서 정보 수정에 실패했습니다: ' + error.response.data.message);
+                });
+        }
+        
+        function deleteBook() {
+            const password = prompt('관리자 비밀번호를 입력하세요:');
+            if (!password) return;
+            
+            if (confirm('정말 삭제하시겠습니까?')) {
+                axios.delete(`/api/books/${bookId}?password=${password}`)
+                    .then(response => {
+                        alert('도서가 삭제되었습니다.');
+                        window.location.href = '/books';
+                    })
+                    .catch(error => {
+                        alert('도서 삭제에 실패했습니다: ' + error.response.data.message);
+                    });
+            }
+        }
+        
+        function order(bookId) {
+            const quantity = document.getElementById('quantity').value;
+            // TODO: 주문 기능 구현
+            alert('주문 기능은 아직 구현되지 않았습니다.');
+        }
+    </script>
+</th:block>
+
+</html>

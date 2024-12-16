@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,4 +26,12 @@ public class BookEntity {
     private String publisher;
 
     private Integer price;
+    
+    private Integer stock;  // 재고 수량
+    
+    private String status;  // 상태 (AVAILABLE, SOLD_OUT 등)
+    
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
 }
