@@ -12,9 +12,10 @@ import com.example.board.orders.converter.OrderConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -90,5 +91,12 @@ public class OrderService {
         
         order.setStatus(status);
         return orderConverter.toDto(ordersRepository.save(order));
+    }
+
+    public List<OrderDto> getAllOrders() {
+        return ordersRepository.findAllByOrderByIdDesc()
+            .stream()
+            .map(orderConverter::toDto)
+            .collect(Collectors.toList());
     }
 }

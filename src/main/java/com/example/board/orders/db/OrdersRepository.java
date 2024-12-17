@@ -1,6 +1,7 @@
 package com.example.board.orders.db;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 
 public interface OrdersRepository extends JpaRepository<OrdersEntity, Long> {
@@ -9,4 +10,6 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity, Long> {
     
     // 주문 상태별 조회
     List<OrdersEntity> findByStatus(String status);
+
+    List<OrdersEntity> findAllByOrderByIdDesc();
 }

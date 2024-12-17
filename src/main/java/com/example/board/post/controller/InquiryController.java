@@ -1,7 +1,11 @@
 package com.example.board.post.controller;
 
+import com.example.board.post.service.PostConverter;
 import com.example.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class InquiryController {
     private final PostService postService;
-    
+
     @GetMapping("")
     public String inquiryList(Model model) {
         var inquiries = postService.getInquiryList();

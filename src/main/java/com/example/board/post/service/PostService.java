@@ -97,13 +97,19 @@ public class PostService {
     }
 
     // 공지사항 목록 조회
-    public List<PostEntity> getNoticeList() {
-        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.NOTICE);
+    public List<PostEntity> getNotices(int limit) {
+        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.NOTICE)
+            .stream()
+            .limit(limit)
+            .collect(Collectors.toList());
     }
     
     // 문의글 목록 조회
-    public List<PostEntity> getInquiryList() {
-        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.INQUIRY);
+    public List<PostEntity> getInquiries(int limit) {
+        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.INQUIRY)
+            .stream()
+            .limit(limit)
+            .collect(Collectors.toList());
     }
     
     // 특정 상태의 문의글 조회
@@ -113,4 +119,26 @@ public class PostService {
             status
         );
     }
+
+    public List<PostDto> getInquiryList() {
+        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.ORDER_INQUIRY)
+            .stream()
+            .map(postConverter::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public List<PostDto> getNoticeList() {
+        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.NOTICE)
+            .stream()
+            .map(postConverter::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public List<PostDto> getOrderInquiryList() {
+        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.ORDER_INQUIRY)
+            .stream()
+            .map(postConverter::toDto)
+            .collect(Collectors.toList());
+    }
+
 }

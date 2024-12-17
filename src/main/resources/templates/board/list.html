@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>게시판</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>게시판</h2>
+        </div>
+    </div>
+
+    <!-- 게시판 종류 -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">공지사항</h5>
+                    <p class="card-text">쇼핑몰의 중요 공지사항을 확인하세요.</p>
+                    <a href="/notice" class="btn btn-primary">바로가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">문의게시판</h5>
+                    <p class="card-text">일반 문의사항을 등록해주세요.</p>
+                    <a href="/inquiry" class="btn btn-primary">바로가기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">주문문의</h5>
+                    <p class="card-text">주문관련 문의사항을 등록해주세요.</p>
+                    <a href="/order-inquiry" class="btn btn-primary">바로가기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 공지사항 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">최근 공지사항</h5>
+            <a href="/notice" class="btn btn-sm btn-outline-primary">더보기</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="notice : ${notices}">
+                        <td>
+                            <a th:href="@{/notice/{id}(id=${notice.id})}" 
+                               th:text="${notice.title}">공지사항 제목</a>
+                        </td>
+                        <td th:text="${#temporals.format(notice.postedAt, 'yyyy-MM-dd')}">
+                            작성일
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 최근 문의글 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">최근 문의글</h5>
+            <a href="/inquiry" class="btn btn-sm btn-outline-primary">더보기</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>상태</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inquiry : ${inquiries}">
+                        <td>
+                            <a th:href="@{/inquiry/{id}(id=${inquiry.id})}" 
+                               th:text="${inquiry.title}">문의글 제목</a>
+                            <span th:if="${inquiry.isSecret}" class="badge bg-secondary">비밀글</span>
+                        </td>
+                        <td>
+                            <span class="badge" 
+                                  th:classappend="${inquiry.inquiryStatus == 'PENDING' ? 'bg-warning' : 'bg-success'}"
+                                  th:text="${inquiry.inquiryStatus?.description}">상태</span>
+                        </td>
+                        <td th:text="${#temporals.format(inquiry.postedAt, 'yyyy-MM-dd')}">
+                            작성일
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</html>
