@@ -31,17 +31,23 @@ public class OrdersEntity {
     private List<OrderItemEntity> orderItems = new ArrayList<>();
     
     private String status;  // orderStatus 제거하고 status만 사용
+
+    @Column(length = 4)
+    private String password;  // 4자리 비밀번호
     
     private Integer totalAmount;
     
     @Column(name = "order_date")
-    private LocalDateTime orderDate;
+    @Builder.Default
+    private LocalDateTime orderedAt = LocalDateTime.now();
     
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();;
     
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Builder.Default
+    private LocalDateTime updatedAt = LocalDateTime.now();;
     
     // 주문 항목 추가 메소드
     public void addOrderItem(OrderItemEntity orderItem) {

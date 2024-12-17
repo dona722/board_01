@@ -121,7 +121,10 @@ public class PostService {
     }
 
     public List<PostDto> getInquiryList() {
-        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.ORDER_INQUIRY)
+        return postRepository.findByBoardEntityBoardTypeAndStatusOrderByIdDesc(
+            BoardType.INQUIRY, 
+            "REGISTERED"
+        )
             .stream()
             .map(postConverter::toDto)
             .collect(Collectors.toList());
@@ -135,7 +138,10 @@ public class PostService {
     }
 
     public List<PostDto> getOrderInquiryList() {
-        return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.ORDER_INQUIRY)
+        return postRepository.findByBoardEntityBoardTypeAndStatusOrderByIdDesc(
+            BoardType.ORDER_INQUIRY, 
+            "REGISTERED"
+        )
             .stream()
             .map(postConverter::toDto)
             .collect(Collectors.toList());

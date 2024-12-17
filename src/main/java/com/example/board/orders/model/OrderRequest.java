@@ -23,6 +23,9 @@ public class OrderRequest {
     @NotBlank(message = "배송 주소는 필수입니다")
     private String address;
     
+    @NotBlank(message = "비밀번호는 필수입니다")
+    private String password;
+
     @NotNull(message = "주문 상품은 필수입니다")
     private List<OrderItemRequest> items;
     

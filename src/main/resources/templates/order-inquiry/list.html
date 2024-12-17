@@ -35,7 +35,7 @@
                         <td>
                             <a th:href="@{/order-inquiry/{id}(id=${post.id})}" 
                                th:text="${post.title}">주문 관련 문의입니다</a>
-                            <span th:if="${post.isSecret}" class="badge bg-secondary">비밀글</span>
+                            <span th:if="${post.secret}" class="badge bg-secondary">비밀글</span>
                         </td>
                         <td th:text="${post.userName}">홍길동</td>
                         <td>

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrdersRepository ordersRepository;
@@ -52,7 +53,9 @@ public class OrderService {
         var order = OrdersEntity.builder()
             .customer(customer)
             .status("ORDERED")
-            .orderDate(LocalDateTime.now())
+            .orderedAt(LocalDateTime.now())
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
 
         // 4. 주문 상품 추가 및 재고 감소
@@ -76,6 +79,18 @@ public class OrderService {
         // 5. 주문 저장
         var savedOrder = ordersRepository.save(order);
         return orderConverter.toDto(savedOrder);
+    }
+
+    // 비밀번호로 주문 조회 메소드 추가
+    public OrderDto getOrderWithPassword(Long orderId, String password) {
+        var order = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+            
+        if (!order.getPassword().equals(password)) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+        
+        return orderConverter.toDto(order);
     }
 
     public OrderDto getOrder(Long orderId) {

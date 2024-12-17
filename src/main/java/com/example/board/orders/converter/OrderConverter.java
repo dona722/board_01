@@ -26,7 +26,7 @@ public class OrderConverter {
             .customerPhone(entity.getCustomer().getPhone())
             .address(entity.getCustomer().getAddress())
             .status(entity.getStatus())
-            .orderedAt(entity.getOrderDate())
+            .orderedAt(entity.getOrderedAt())
             .items(items)
             .totalAmount(totalAmount)
             .build();

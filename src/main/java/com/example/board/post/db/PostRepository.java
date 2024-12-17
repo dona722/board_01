@@ -33,4 +33,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
         BoardType boardType, 
         InquiryStatus inquiryStatus
     );
+
+    List<PostEntity> findByBoardEntityBoardTypeAndStatusOrderByIdDesc(BoardType boardType, String status);
 }
