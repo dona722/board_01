@@ -34,11 +34,7 @@ public class ViewController {
         return "post/inquiry-write";  // post/write -> post/inquiry-write로 변경
     }
 
-    @GetMapping("/notice")
-public String noticeList(Model model) {
-    model.addAttribute("posts", postService.getNotices(10));  // 10개의 공지사항 조회
-    return "notice/list";
-}
+
 
     @GetMapping("/inquiry/{id}")
     public String inquiryDetail(@PathVariable Long id, Model model) {
