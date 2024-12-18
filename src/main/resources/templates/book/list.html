@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>도서 목록</title>
+</head>
+
+<div layout:fragment="content">
+    <!-- 검색 영역 -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form class="d-flex" method="get" th:action="@{/books}">
+                <input class="form-control me-2" 
+                    type="search" 
+                    placeholder="도서명 검색" 
+                    name="keyword"
+                    th:value="${keyword}">
+                <button class="btn btn-outline-primary" type="submit">검색</button>
+                <a th:if="${keyword != null}" 
+                th:href="@{/books}" 
+                class="btn btn-outline-secondary ms-2">
+                    초기화
+                </a>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <button type="button" 
+                    class="btn btn-primary" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#addBookModal">
+                도서 추가
+            </button>
+        </div>
+    </div>
+
+    <!-- 검색 결과가 없을 경우 메시지 표시 -->
+    <div class="alert alert-info" th:if="${books.isEmpty()}">
+        <span th:if="${keyword != null}">
+            "<span th:text="${keyword}"></span>"에 대한 검색 결과가 없습니다.
+        </span>
+        <span th:unless="${keyword != null}">
+            등록된 도서가 없습니다.
+        </span>
+    </div>
+
+    <!-- 도서 목록 -->
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col" th:each="book : ${books}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${book.bookName}">도서명</h5>
+                    <p class="card-text" th:text="${book.publisher}">출판사</p>
+                    <p class="card-text">
+                        <span class="text-primary" th:text="${#numbers.formatInteger(book.price, 0, 'COMMA')}">가격</span>원
+                    </p>
+                    <p class="card-text">
+                        <span th:if="${book.stock > 0}" class="badge bg-success">재고있음</span>
+                        <span th:unless="${book.stock > 0}" class="badge bg-danger">품절</span>
+                        <small class="text-muted" th:text="|재고: ${book.stock}개|">재고량</small>
+                    </p>
+                    <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-sm btn-outline-primary">상세보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 도서 추가 모달 -->
+    <div class="modal fade" id="addBookModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">도서 추가</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBookForm">
+                        <div class="mb-3">
+                            <label class="form-label">도서명</label>
+                            <input type="text" class="form-control" name="bookName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">출판사</label>
+                            <input type="text" class="form-control" name="publisher" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">가격</label>
+                            <input type="number" class="form-control" name="price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">재고</label>
+                            <input type="number" class="form-control" name="stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">관리자 비밀번호</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="addBook()">추가</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        function addBook() {
+            const formData = new FormData(document.getElementById('addBookForm'));
+            const data = Object.fromEntries(formData.entries());
+            
+            axios.post('/api/books', data)
+                .then(response => {
+                    alert('도서가 추가되었습니다.');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('도서 추가에 실패했습니다: ' + error.response.data.message);
+                });
+        }
+    </script>
+</th:block>
+
+</html>

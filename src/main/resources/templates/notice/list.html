@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>공지사항</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>공지사항</h2>
+        
+        <table class="table mt-4">
+            <thead class="table-light">
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post : ${posts}">
+                    <td th:text="${post.id}"></td>
+                    <td>
+                        <a th:href="@{/notice/{id}(id=${post.id})}" 
+                           th:text="${post.title}"></a>
+                    </td>
+                    <td th:text="${post.userName}"></td>
+                    <td th:text="${#temporals.format(post.postedAt, 'yyyy-MM-dd')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</html>

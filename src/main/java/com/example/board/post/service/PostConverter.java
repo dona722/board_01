@@ -18,6 +18,9 @@ public class PostConverter {
                 .content(postEntity.getContent())
                 .postedAt(postEntity.getPostedAt())
                 .boardId(postEntity.getBoardEntity().getId())
+                .secret(postEntity.isSecret())  // 추가
+                .inquiryStatus(postEntity.getInquiryStatus())  // 추가
+                .updatedAt(postEntity.getUpdatedAt())  // 추가
                 .build()
                 ;
     }

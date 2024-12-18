@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>주문문의</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col">
+                <h2>주문문의</h2>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th style="width: 35%">제목</th>
+                                <th>주문번호</th>
+                                <th>작성자</th>
+                                <th>상태</th>
+                                <th>등록일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="post : ${posts}">
+                                <td th:text="${post.id}">1</td>
+                                <td>
+                                    <a th:href="@{/post/{id}(id=${post.id})}" 
+                                       th:text="${post.title}"
+                                       class="text-decoration-none">주문 관련 문의</a>
+                                    <span th:if="${post.secret}" class="text-primary">🔒</span>
+                                </td>
+                                <td>
+                                    <a th:if="${post.orderId}" 
+                                       th:href="@{/orders/{id}(id=${post.orderId})}"
+                                       th:text="${'#' + post.orderId}"
+                                       class="text-decoration-none">#123</a>
+                                </td>
+                                <td th:text="${post.userName}">홍길동</td>
+                                <td>
+                                    <span th:text="${post.inquiryStatus?.description}"
+                                          th:class="${post.inquiryStatus?.name() == 'PENDING' ? 'badge bg-warning' : 
+                                                    post.inquiryStatus?.name() == 'IN_PROGRESS' ? 'badge bg-primary' : 
+                                                    'badge bg-success'}">
+                                        답변대기
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(post.postedAt, 'yyyy-MM-dd')}">2024-01-01</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(posts)}">
+                                <td colspan="6" class="text-center">등록된 문의가 없습니다.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col text-end">
+                <a href="/order-inquiry/write" class="btn btn-primary">문의하기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

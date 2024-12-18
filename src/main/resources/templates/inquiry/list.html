@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>문의게시판</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <h1>문의게시판</h1>
+        <table class="board-table">
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>상태</th>
+                    <th>작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post : ${posts}">
+                    <td th:text="${post.id}"></td>
+                    <td>
+                        <a th:href="@{/post/{id}(id=${post.id})}" 
+                           th:text="${post.title}"></a>
+                        <span th:if="${post.secret}" class="secret">🔒</span>
+                    </td>
+                    <td th:text="${post.userName}"></td>
+                    <td th:text="${post.inquiryStatus?.description}"></td>
+                    <td th:text="${#temporals.format(post.postedAt, 'yyyy-MM-dd')}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="button-area">
+            <a href="/inquiry/write" class="btn btn-primary">문의하기</a>
+        </div>
+    </div>
+</div>
+
+</html>
