@@ -94,13 +94,22 @@ public class BookService {
     }
 
     public List<BookDto> searchBooks(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            return getBookList();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return bookRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
         }
         
-        return bookRepository.findByBookNameContainingOrderByIdDesc(keyword)
-            .stream()
+        return bookRepository.findByBookNameContainingIgnoreCase(keyword).stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
     }
+
+    public List<BookDto> getLatestBooks() {
+        return bookRepository.findTop5ByOrderByIdDesc().stream()
+            .map(this::convertToDto)
+            .toList();
+    }
+
+
 }

@@ -35,4 +35,10 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     );
 
     List<PostEntity> findByBoardEntityBoardTypeAndStatusOrderByIdDesc(BoardType boardType, String status);
+
+    List<PostEntity> findByBoardEntityIdAndStatusOrderByIdDesc(
+        Long boardId, 
+        String status, 
+        Pageable pageable
+    );
 }

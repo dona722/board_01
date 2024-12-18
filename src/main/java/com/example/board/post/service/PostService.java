@@ -97,18 +97,20 @@ public class PostService {
     }
 
     // 공지사항 목록 조회
-    public List<PostEntity> getNotices(int limit) {
+    public List<PostDto> getNotices(int limit) {
         return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.NOTICE)
             .stream()
             .limit(limit)
+            .map(postConverter::toDto)  // PostDto로 변환
             .collect(Collectors.toList());
     }
     
     // 문의글 목록 조회
-    public List<PostEntity> getInquiries(int limit) {
+    public List<PostDto> getInquiries(int limit) {
         return postRepository.findByBoardEntityBoardTypeOrderByIdDesc(BoardType.INQUIRY)
             .stream()
             .limit(limit)
+            .map(postConverter::toDto)  // PostDto로 변환
             .collect(Collectors.toList());
     }
     

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title th:text="${post.title}">게시글 제목</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title" th:text="${post.title}">게시글 제목</h2>
+                <div class="text-muted">
+                    <span th:text="${post.userName}">작성자</span> |
+                    <span th:text="${#temporals.format(post.postedAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-4" style="min-height: 200px;" th:utext="${post.content}">
+                    게시글 내용
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">목록</button>
+                    <div>
+                        <button type="button" class="btn btn-primary" onclick="showEditForm()">수정</button>
+                        <button type="button" class="btn btn-danger" onclick="deletePost()">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 수정/삭제 시 비밀번호 확인 모달 -->
+        <div class="modal fade" id="passwordModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">비밀번호 확인</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-primary" id="confirmButton">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var postId = /*[[${post.id}]]*/ null;
+        let actionType = '';
+
+        function showEditForm() {
+            actionType = 'edit';
+            const modal = new bootstrap.Modal(document.getElementById('passwordModal'));
+            modal.show();
+        }
+
+        function deletePost() {
+            actionType = 'delete';
+            const modal = new bootstrap.Modal(document.getElementById('passwordModal'));
+            modal.show();
+        }
+
+        document.getElementById('confirmButton').addEventListener('click', function() {
+            const password = document.getElementById('password').value;
+            
+            if (actionType === 'edit') {
+                window.location.href = `/posts/${postId}/edit?password=${password}`;
+            } else if (actionType === 'delete') {
+                fetch(`/api/posts/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: password })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('게시글이 삭제되었습니다.');
+                        window.location.href = '/boards';
+                    } else {
+                        alert('비밀번호가 일치하지 않습니다.');
+                    }
+                })
+                .catch(error => {
+                    alert('삭제 중 오류가 발생했습니다.');
+                    console.error('Error:', error);
+                });
+            }
+        });
+    </script>
+</div>
+
+</html>

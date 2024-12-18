@@ -9,4 +9,8 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     
     // 출판사로 검색
     List<BookEntity> findByPublisherContainingOrderByIdDesc(String keyword);
+
+    List<BookEntity> findByBookNameContainingIgnoreCase(String keyword);
+
+    List<BookEntity> findTop5ByOrderByIdDesc(); 
 }

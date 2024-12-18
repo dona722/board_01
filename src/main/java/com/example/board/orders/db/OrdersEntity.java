@@ -1,7 +1,6 @@
 package com.example.board.orders.db;
 
 import com.example.board.customer.db.CustomerEntity;
-import com.example.board.orders.db.OrderItemEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

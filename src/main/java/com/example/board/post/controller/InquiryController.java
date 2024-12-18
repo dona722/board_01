@@ -1,9 +1,8 @@
 package com.example.board.post.controller;
 
+import com.example.board.post.model.PostDto;
 import com.example.board.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

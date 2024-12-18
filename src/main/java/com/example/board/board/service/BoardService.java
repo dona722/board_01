@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,11 +91,23 @@ public class BoardService {
         boardRepository.save(entity);
     }
 
-    // 게시판의 게시글 목록 조회
     public List<PostDto> getBoardPosts(Long boardId) {
-        return postRepository.findByBoardEntityIdAndStatus(boardId, "REGISTERED")
+        return postRepository.findByBoardEntityIdAndStatus(boardId, "ACTIVE")
             .stream()
             .map(this::convertToPostDto)
             .collect(Collectors.toList());
     }
+
+    // 게시판의 게시글 목록 조회
+    public List<PostDto> getBoardPosts(Long boardId, int limit) {
+        return postRepository.findByBoardEntityIdAndStatusOrderByIdDesc(
+                boardId, 
+                "ACTIVE",
+                PageRequest.of(0, limit)
+            )
+            .stream()
+            .map(this::convertToPostDto)
+            .collect(Collectors.toList());
+    }
+
 }

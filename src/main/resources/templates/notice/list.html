@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
 <head>
     <title>공지사항</title>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <div class="container">
-        <h1>공지사항</h1>
-        <table class="board-table">
-            <thead>
+
+<div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>공지사항</h2>
+        
+        <table class="table mt-4">
+            <thead class="table-light">
                 <tr>
                     <th>번호</th>
                     <th>제목</th>
@@ -20,7 +24,7 @@
                 <tr th:each="post : ${posts}">
                     <td th:text="${post.id}"></td>
                     <td>
-                        <a th:href="@{/post/{id}(id=${post.id})}" 
+                        <a th:href="@{/notice/{id}(id=${post.id})}" 
                            th:text="${post.title}"></a>
                     </td>
                     <td th:text="${post.userName}"></td>
@@ -29,5 +33,6 @@
             </tbody>
         </table>
     </div>
-</body>
+</div>
+
 </html>

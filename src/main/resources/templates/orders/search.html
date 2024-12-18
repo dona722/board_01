@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>주문 조회</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">주문 조회</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="@{/order-search}">
+                            <div class="mb-3">
+                                <label class="form-label">주문자 이름</label>
+                                <input type="text" name="customerName" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">비밀번호</label>
+                                <input type="password" name="password" class="form-control" maxlength="4" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">조회하기</button>
+                        </form>
+
+                        <!-- 에러 메시지 -->
+                        <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                            <span th:text="${error}">에러 메시지</span>
+                        </div>
+
+                        <!-- 주문 정보 -->
+                        <div th:if="${success}" class="mt-4">
+                            <h5>주문 정보</h5>
+                            <table class="table">
+                                <tr>
+                                    <th>주문번호</th>
+                                    <td th:text="${order.id}">#123</td>
+                                </tr>
+                                <tr>
+                                    <th>주문자</th>
+                                    <td th:text="${order.customerName}">홍길동</td>
+                                </tr>
+                                <tr>
+                                    <th>주문일시</th>
+                                    <td th:text="${#temporals.format(order.orderedAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                                </tr>
+                                <tr>
+                                    <th>주문상태</th>
+                                    <td th:text="${order.status}">주문완료</td>
+                                </tr>
+                            </table>
+
+                            <h5 class="mt-4">주문 상품</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>상품명</th>
+                                        <th>수량</th>
+                                        <th>가격</th>
+                                        <th>합계</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${order.items}">
+                                        <td th:text="${item.bookName}">책 제목</td>
+                                        <td th:text="${item.quantity}">1</td>
+                                        <td th:text="${#numbers.formatInteger(item.price, 0, 'COMMA') + '원'}">10,000원</td>
+                                        <td th:text="${#numbers.formatInteger(item.amount, 0, 'COMMA') + '원'}">10,000원</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>총 주문금액</strong></td>
+                                        <td th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">10,000원</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

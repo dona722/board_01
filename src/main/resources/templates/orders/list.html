@@ -4,14 +4,14 @@
       layout:decorate="~{layout/base}">
 
 <head>
-    <title>주문 목록</title>
+    <title>문의게시판</title>
 </head>
 
 <div layout:fragment="content">
     <div class="container">
         <div class="row mb-4">
             <div class="col">
-                <h2>주문 목록</h2>
+                <h2>문의게시판</h2>
             </div>
         </div>
 
@@ -21,35 +21,35 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>주문번호</th>
-                                <th>주문자</th>
-                                <th>연락처</th>
-                                <th>주문금액</th>
-                                <th>주문상태</th>
-                                <th>주문일시</th>
-                                <th>상세</th>
+                                <th>번호</th>
+                                <th style="width: 45%">제목</th>
+                                <th>작성자</th>
+                                <th>상태</th>
+                                <th>등록일</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="order : ${orders}">
-                                <td th:text="${order.id}">1</td>
-                                <td th:text="${order.customerName}">홍길동</td>
-                                <td th:text="${order.customerPhone}">010-1234-5678</td>
-                                <td th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">35,000원</td>
+                            <tr th:each="post : ${posts}">
+                                <td th:text="${post.id}">1</td>
                                 <td>
-                                    <span th:text="${order.status}" 
-                                          th:class="${order.status == 'ORDERED' ? 'badge bg-primary' : 'badge bg-success'}">
-                                        주문완료
+                                    <a th:href="@{/post/{id}(id=${post.id})}" 
+                                       th:text="${post.title}"
+                                       class="text-decoration-none">문의 제목</a>
+                                    <span th:if="${post.secret}" class="text-primary">🔒</span>
+                                </td>
+                                <td th:text="${post.userName}">홍길동</td>
+                                <td>
+                                    <span th:text="${post.inquiryStatus?.description}"
+                                          th:class="${post.inquiryStatus?.name() == 'PENDING' ? 'badge bg-warning' : 
+                                                    post.inquiryStatus?.name() == 'IN_PROGRESS' ? 'badge bg-primary' : 
+                                                    'badge bg-success'}">
+                                        답변대기
                                     </span>
                                 </td>
-                                <td th:text="${#temporals.format(order.orderedAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:34</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" 
-                                            th:onclick="'viewOrder(' + ${order.id} + ')'">상세보기</button>
-                                </td>
+                                <td th:text="${#temporals.format(post.postedAt, 'yyyy-MM-dd')}">2024-01-01</td>
                             </tr>
-                            <tr th:if="${#lists.isEmpty(orders)}">
-                                <td colspan="7" class="text-center">주문 내역이 없습니다.</td>
+                            <tr th:if="${#lists.isEmpty(posts)}">
+                                <td colspan="5" class="text-center">등록된 문의가 없습니다.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -57,158 +57,12 @@
             </div>
         </div>
 
-        <!-- 주문 상세 모달 -->
-        <div class="modal fade" id="orderDetailModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">주문 상세</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="orderPasswordForm">
-                            <div class="mb-3">
-                                <label class="form-label">주문 비밀번호</label>
-                                <input type="password" class="form-control" id="orderPassword" maxlength="4">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="button" class="btn btn-primary" onclick="checkOrderPassword()">확인</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 주문 상세 정보 모달 -->
-        <div class="modal fade" id="orderInfoModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">주문 상세 정보</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <h6>주문 정보</h6>
-                                <p>
-                                    주문번호: <span id="orderDetailId"></span><br>
-                                    주문일시: <span id="orderDetailDate"></span><br>
-                                    주문상태: <span id="orderDetailStatus"></span>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>주문자 정보</h6>
-                                <p>
-                                    이름: <span id="orderDetailCustomerName"></span><br>
-                                    연락처: <span id="orderDetailCustomerPhone"></span><br>
-                                    주소: <span id="orderDetailAddress"></span>
-                                </p>
-                            </div>
-                        </div>
-                        <h6>주문 상품</h6>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>도서명</th>
-                                    <th>수량</th>
-                                    <th>가격</th>
-                                    <th>합계</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orderDetailItems">
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3" class="text-end"><strong>총 주문금액</strong></td>
-                                    <td id="orderDetailTotal"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    </div>
-                </div>
+        <div class="row mt-3">
+            <div class="col text-end">
+                <a href="/inquiry/write" class="btn btn-primary">문의하기</a>
             </div>
         </div>
     </div>
 </div>
-
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
-        let selectedOrderId = null;
-
-        function viewOrder(orderId) {
-            selectedOrderId = orderId;
-            const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
-            modal.show();
-        }
-
-        function checkOrderPassword() {
-            const password = document.getElementById('orderPassword').value;
-            
-            if (!password) {
-                alert('비밀번호를 입력해주세요.');
-                return;
-            }
-            
-            if (!/^\d{4}$/.test(password)) {
-                alert('비밀번호는 4자리 숫자여야 합니다.');
-                return;
-            }
-            
-            axios.get(`/api/orders/${selectedOrderId}?password=${password}`)
-                .then(response => {
-                    const order = response.data.data;
-                    showOrderDetail(order);
-                    
-                    // 비밀번호 모달 닫기
-                    bootstrap.Modal.getInstance(document.getElementById('orderDetailModal')).hide();
-                    
-                    // 비밀번호 입력 초기화
-                    document.getElementById('orderPassword').value = '';
-                })
-                .catch(error => {
-                    alert('비밀번호가 일치하지 않습니다.');
-                });
-        }
-
-        function showOrderDetail(order) {
-            // 기본 정보 설정
-            document.getElementById('orderDetailId').textContent = order.id;
-            document.getElementById('orderDetailDate').textContent = new Date(order.orderedAt).toLocaleString(); 
-            document.getElementById('orderDetailStatus').textContent = order.status;
-            document.getElementById('orderDetailCustomerName').textContent = order.customerName;
-            document.getElementById('orderDetailCustomerPhone').textContent = order.customerPhone;
-            document.getElementById('orderDetailAddress').textContent = order.address;
-            
-            // 주문 상품 목록 설정
-            const itemsBody = document.getElementById('orderDetailItems');
-            itemsBody.innerHTML = '';
-            
-            order.items.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.bookName}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.price.toLocaleString()}원</td>
-                    <td>${(item.price * item.quantity).toLocaleString()}원</td>
-                `;
-                itemsBody.appendChild(row);
-            });
-            
-            // 총 주문금액 설정
-            document.getElementById('orderDetailTotal').textContent = 
-                order.totalAmount.toLocaleString() + '원';
-            
-            // 상세 정보 모달 표시
-            const modal = new bootstrap.Modal(document.getElementById('orderInfoModal'));
-            modal.show();
-        }
-    </script>
-</th:block>
 
 </html>
